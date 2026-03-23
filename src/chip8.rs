@@ -94,13 +94,13 @@ pub mod chip8 {
 
         pub fn op_6xkk(mut self) -> () {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
-            let byte = self.opcode & 0x00FF;
+            let byte: u16 = self.opcode & 0x00FF;
             self.registers[vx as usize] = byte as u8;
         }
 
         pub fn op_7xkk(mut self) -> () {
-            let vx = (self.opcode & 0x0F00) >> 8;
-            let byte = self.opcode & 0x00FF;
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let byte: u16 = self.opcode & 0x00FF;
             self.registers[vx as usize] += byte as u8;
         }
 
@@ -194,6 +194,13 @@ pub mod chip8 {
             let address: u16 = self.opcode & 0x0FFF;
             self.index = address;
             self.pc = self.registers[0] as u16 + address;
+        }
+
+        pub fn op_cxkk(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let byte: u16 = self.opcode & 0x00FF;
+            let x: u8 = rand::random();
+            self.registers[vx as usize] = x & byte as u8;
         }
 
         pub fn new() -> Chip8 {
