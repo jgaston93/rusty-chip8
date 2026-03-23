@@ -153,6 +153,49 @@ pub mod chip8 {
             self.registers[vx as usize] -= self.registers[vy as usize];
         }
 
+        pub fn op_8xy6(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            self.registers[0xF] = self.registers[vx as usize] & 0x1;
+            self.registers[vx as usize] >>= 1;
+        }
+
+        pub fn op_8xy7(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            if self.registers[vy as usize] > self.registers[vx as usize] {
+                self.registers[0xF] = 1;
+            } else {
+                self.registers[0xF] = 0;
+            }
+
+            self.registers[vx as usize] = self.registers[vy as usize] - self.registers[vx as usize];
+        }
+
+        pub fn op_8xye(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            self.registers[0xF] = (self.registers[vx as usize] & 8) >> 7;
+            self.registers[vx as usize] <<= 1;
+        }
+
+        pub fn op_9xy0(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            if self.registers[vx as usize] != self.registers[vy as usize] {
+                self.pc += 2;
+            }
+        }
+
+        pub fn op_annn(mut self) -> () {
+            let address: u16 = self.opcode & 0x0FFF;
+            self.index = address;
+        }
+
+        pub fn op_bnnn(mut self) -> () {
+            let address: u16 = self.opcode & 0x0FFF;
+            self.index = address;
+            self.pc = self.registers[0] as u16 + address;
+        }
+
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
