@@ -92,6 +92,67 @@ pub mod chip8 {
             }
         }
 
+        pub fn op_6xkk(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let byte = self.opcode & 0x00FF;
+            self.registers[vx as usize] = byte as u8;
+        }
+
+        pub fn op_7xkk(mut self) -> () {
+            let vx = (self.opcode & 0x0F00) >> 8;
+            let byte = self.opcode & 0x00FF;
+            self.registers[vx as usize] += byte as u8;
+        }
+
+        pub fn op_8xy0(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            self.registers[vx as usize] = self.registers[vy as usize];
+        }
+
+        pub fn op_8xy1(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            self.registers[vx as usize] |= self.registers[vy as usize];
+        }
+
+        pub fn op_8xy2(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            self.registers[vx as usize] &= self.registers[vy as usize];
+        }
+
+        pub fn op_8xy3(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            self.registers[vx as usize] ^= self.registers[vy as usize];
+        }
+
+        pub fn op_8xy4(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            let sum: u16 = self.registers[vx as usize] as u16 + self.registers[vy as usize] as u16;
+            if sum > 255 {
+                self.registers[0xF] = 1;
+            } else {
+                self.registers[0xF] = 0;
+            }
+
+            self.registers[vx as usize] = (sum & 0xFF) as u8;
+        }
+
+        pub fn op_8xy5(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let vy: u16 = (self.opcode & 0x00F0) >> 4;
+            if self.registers[vx as usize] > self.registers[vy as usize] {
+                self.registers[0xF] = 1;
+            } else {
+                self.registers[0xF] = 0;
+            }
+
+            self.registers[vx as usize] -= self.registers[vy as usize];
+        }
+
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
