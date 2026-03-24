@@ -229,6 +229,22 @@ pub mod chip8 {
             }
         }
 
+        pub fn op_ex9e(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let key: u8 = self.registers[vx as usize];
+            if self.keypad[key as usize] != 0 {
+                self.pc += 2;
+            }
+        }
+
+        pub fn op_exa1(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let key: u8 = self.registers[vx as usize];
+            if self.keypad[key as usize] == 0 {
+                self.pc += 2;
+            }
+        }
+
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
