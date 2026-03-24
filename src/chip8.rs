@@ -245,6 +245,15 @@ pub mod chip8 {
             }
         }
 
+        pub fn op_fx07(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            self.registers[vx as usize] = self.delay_timer;
+        }
+
+        pub fn op_fx0a(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+        }        
+ 
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
