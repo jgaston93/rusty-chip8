@@ -4,6 +4,8 @@ pub mod chip8 {
 
     const STARTING_ADDRESS: usize = 0x200;
     const FONTSET_STARTING_ADDRESS: usize = 0x50;
+    const VIDEO_WIDTH: usize = 64;
+    const VIDEO_HEIGHT: usize = 32;
 
     const FONTSET: [u8; 80] = [
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -34,7 +36,7 @@ pub mod chip8 {
         delay_timer: u8,
         sound_timer: u8,
         keypad: [u8; 16],
-        video: [u32; 64 * 32],
+        video: [u32; VIDEO_WIDTH * VIDEO_HEIGHT],
         opcode: u16,
     }
 
@@ -48,7 +50,7 @@ pub mod chip8 {
         }
 
         pub fn op_00e0(mut self) -> () {
-            self.video = [0; 64 * 32];
+            self.video = [0; VIDEO_WIDTH * VIDEO_HEIGHT];
         }
 
         pub fn op_00ee(mut self) -> () {
@@ -203,6 +205,30 @@ pub mod chip8 {
             self.registers[vx as usize] = x & byte as u8;
         }
 
+        pub fn op_dxyn(mut self) -> () {
+            let vx: u8 = ((self.opcode & 0x0F00) >> 8) as u8;
+            let vy: u8 = ((self.opcode & 0x00F0) >> 4) as u8;
+            let height: u8 = (self.opcode & 0x000F) as u8;
+            let posx: u8 = self.registers[vx as usize] % VIDEO_WIDTH as u8;
+            let posy: u8 = self.registers[vy as usize] % VIDEO_HEIGHT as u8;
+            self.registers[0xF] = 0;
+            for row in 0..VIDEO_HEIGHT {
+                let sprite_byte: u8 = self.memory[self.index as usize + row];
+                for col in 0..VIDEO_WIDTH {
+                    let sprite_pixel: u8 = sprite_byte & (0x80 >> col);
+                    let screen_pixel: &mut u32 = &mut self.video
+                        [(posy as usize + row) * VIDEO_WIDTH + (posx as usize + col)];
+
+                    if sprite_pixel != 0x00000000 {
+                        if *screen_pixel == 0xFFFFFFFF {
+                            self.registers[0xF] = 1;
+                        }
+                        *screen_pixel ^= 0xFFFFFFFF;
+                    }
+                }
+            }
+        }
+
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
@@ -214,7 +240,7 @@ pub mod chip8 {
                 delay_timer: 0,
                 sound_timer: 0,
                 keypad: [0; 16],
-                video: [0; 64 * 32],
+                video: [0; VIDEO_WIDTH * VIDEO_HEIGHT],
                 opcode: 0,
             };
 
