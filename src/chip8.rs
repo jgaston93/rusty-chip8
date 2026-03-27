@@ -303,8 +303,26 @@ pub mod chip8_emu {
             else {
                 self.pc -= 2;
             }
-        }        
+        } 
+
+        pub fn op_fx15(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+
+            self.delay_timer = self.registers[vx as usize];
+        }
  
+        pub fn op_fx18(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+
+            self.sound_timer = self.registers[vx as usize];
+        }
+ 
+        pub fn op_fx1e(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+
+            self.index = self.registers[vx as usize] as u16;
+        }
+
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
