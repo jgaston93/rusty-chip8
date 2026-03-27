@@ -1,4 +1,4 @@
-pub mod chip8 {
+pub mod chip8_emu {
     use std::fs::File;
     use std::io::Read;
 
@@ -252,6 +252,58 @@ pub mod chip8 {
 
         pub fn op_fx0a(mut self) -> () {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
+
+            if self.keypad[0] != 0 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[1] != 1 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[2] != 2 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[3] != 3 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[4] != 4 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[5] != 5 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[6] != 6 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[7] != 7 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[8] != 8 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[9] != 9 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[10] != 10 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[11] != 11 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[12] != 12 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[13] != 13 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[14] != 14 {
+                self.registers[vx as usize] = 0;
+            }
+            else if self.keypad[15] != 15 {
+                self.registers[vx as usize] = 0;
+            }
+            else {
+                self.pc -= 2;
+            }
         }        
  
         pub fn new() -> Chip8 {
