@@ -212,12 +212,11 @@ pub mod chip8_emu {
             let posx: u8 = self.registers[vx as usize] % VIDEO_WIDTH as u8;
             let posy: u8 = self.registers[vy as usize] % VIDEO_HEIGHT as u8;
             self.registers[0xF] = 0;
-            for row in 0..VIDEO_HEIGHT {
-                let sprite_byte: u8 = self.memory[self.index as usize + row];
-                for col in 0..VIDEO_WIDTH {
+            for row in 0..height {
+                let sprite_byte: u8 = self.memory[(self.index + row as u16) as usize];
+                for col in 0..8 {
                     let sprite_pixel: u8 = sprite_byte & (0x80 >> col);
-                    let screen_pixel: &mut u32 = &mut self.video
-                        [(posy as usize + row) * VIDEO_WIDTH + (posx as usize + col)];
+                    let screen_pixel: &mut u32 = &mut self.video[(posy as usize + row as usize) * VIDEO_WIDTH + (posx as usize + col)];
 
                     if sprite_pixel != 0x00000000 {
                         if *screen_pixel == 0xFFFFFFFF {
