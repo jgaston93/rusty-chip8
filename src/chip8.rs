@@ -41,7 +41,7 @@ pub mod chip8_emu {
     }
 
     impl Chip8 {
-        pub fn load_rom(mut self, filename: &str) -> std::io::Result<()> {
+        pub fn load_rom(&mut self, filename: &str) -> std::io::Result<()> {
             let mut file: File = File::open(filename)?;
             let mem: &mut [u8] = &mut self.memory[0x200..];
             let bytes_read = file.read(mem)?;
@@ -49,28 +49,28 @@ pub mod chip8_emu {
             Ok(())
         }
 
-        pub fn op_00e0(mut self) {
+        pub fn op_00e0(&mut self) {
             self.video = [0; VIDEO_WIDTH * VIDEO_HEIGHT];
         }
 
-        pub fn op_00ee(mut self) {
+        pub fn op_00ee(&mut self) {
             self.sp -= 1;
             self.pc = self.stack[self.sp as usize];
         }
 
-        pub fn op_1nnn(mut self) {
+        pub fn op_1nnn(&mut self) {
             let address: u16 = self.opcode & 0x0FFF;
             self.pc = address;
         }
 
-        pub fn op_2nnn(mut self) {
+        pub fn op_2nnn(&mut self) {
             let address: u16 = self.opcode & 0x0FFF;
             self.stack[self.sp as usize] = self.pc;
             self.sp += 1;
             self.pc = address;
         }
 
-        pub fn op_3xkk(mut self) {
+        pub fn op_3xkk(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let byte: u16 = self.opcode & 0x00FF;
             if self.registers[vx as usize] == byte as u8 {
@@ -78,7 +78,7 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_4xkk(mut self) {
+        pub fn op_4xkk(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let byte: u16 = self.opcode & 0x00FF;
             if self.registers[vx as usize] != byte as u8 {
@@ -86,7 +86,7 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_5xy0(mut self) {
+        pub fn op_5xy0(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             if self.registers[vx as usize] != self.registers[vy as usize] {
@@ -94,43 +94,43 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_6xkk(mut self) {
+        pub fn op_6xkk(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let byte: u16 = self.opcode & 0x00FF;
             self.registers[vx as usize] = byte as u8;
         }
 
-        pub fn op_7xkk(mut self) {
+        pub fn op_7xkk(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let byte: u16 = self.opcode & 0x00FF;
             self.registers[vx as usize] += byte as u8;
         }
 
-        pub fn op_8xy0(mut self) {
+        pub fn op_8xy0(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             self.registers[vx as usize] = self.registers[vy as usize];
         }
 
-        pub fn op_8xy1(mut self) {
+        pub fn op_8xy1(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             self.registers[vx as usize] |= self.registers[vy as usize];
         }
 
-        pub fn op_8xy2(mut self) {
+        pub fn op_8xy2(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             self.registers[vx as usize] &= self.registers[vy as usize];
         }
 
-        pub fn op_8xy3(mut self) {
+        pub fn op_8xy3(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             self.registers[vx as usize] ^= self.registers[vy as usize];
         }
 
-        pub fn op_8xy4(mut self) {
+        pub fn op_8xy4(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             let sum: u16 = self.registers[vx as usize] as u16 + self.registers[vy as usize] as u16;
@@ -143,7 +143,7 @@ pub mod chip8_emu {
             self.registers[vx as usize] = (sum & 0xFF) as u8;
         }
 
-        pub fn op_8xy5(mut self) {
+        pub fn op_8xy5(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             if self.registers[vx as usize] > self.registers[vy as usize] {
@@ -155,13 +155,13 @@ pub mod chip8_emu {
             self.registers[vx as usize] -= self.registers[vy as usize];
         }
 
-        pub fn op_8xy6(mut self) {
+        pub fn op_8xy6(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             self.registers[0xF] = self.registers[vx as usize] & 0x1;
             self.registers[vx as usize] >>= 1;
         }
 
-        pub fn op_8xy7(mut self) {
+        pub fn op_8xy7(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             if self.registers[vy as usize] > self.registers[vx as usize] {
@@ -173,13 +173,13 @@ pub mod chip8_emu {
             self.registers[vx as usize] = self.registers[vy as usize] - self.registers[vx as usize];
         }
 
-        pub fn op_8xye(mut self) {
+        pub fn op_8xye(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             self.registers[0xF] = (self.registers[vx as usize] & 8) >> 7;
             self.registers[vx as usize] <<= 1;
         }
 
-        pub fn op_9xy0(mut self) {
+        pub fn op_9xy0(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let vy: u16 = (self.opcode & 0x00F0) >> 4;
             if self.registers[vx as usize] != self.registers[vy as usize] {
@@ -187,25 +187,25 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_annn(mut self) {
+        pub fn op_annn(&mut self) {
             let address: u16 = self.opcode & 0x0FFF;
             self.index = address;
         }
 
-        pub fn op_bnnn(mut self) {
+        pub fn op_bnnn(&mut self) {
             let address: u16 = self.opcode & 0x0FFF;
             self.index = address;
             self.pc = self.registers[0] as u16 + address;
         }
 
-        pub fn op_cxkk(mut self) {
+        pub fn op_cxkk(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let byte: u16 = self.opcode & 0x00FF;
             let x: u8 = rand::random();
             self.registers[vx as usize] = x & byte as u8;
         }
 
-        pub fn op_dxyn(mut self) {
+        pub fn op_dxyn(&mut self) {
             let vx: u8 = ((self.opcode & 0x0F00) >> 8) as u8;
             let vy: u8 = ((self.opcode & 0x00F0) >> 4) as u8;
             let height: u8 = (self.opcode & 0x000F) as u8;
@@ -228,7 +228,7 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_ex9e(mut self) {
+        pub fn op_ex9e(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let key: u8 = self.registers[vx as usize];
             if self.keypad[key as usize] != 0 {
@@ -236,7 +236,7 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_exa1(mut self) {
+        pub fn op_exa1(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let key: u8 = self.registers[vx as usize];
             if self.keypad[key as usize] == 0 {
@@ -244,12 +244,12 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_fx07(mut self) {
+        pub fn op_fx07(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             self.registers[vx as usize] = self.delay_timer;
         }
 
-        pub fn op_fx0a(mut self) {
+        pub fn op_fx0a(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
 
             if self.keypad[0] != 0 {
@@ -305,31 +305,31 @@ pub mod chip8_emu {
             }
         } 
 
-        pub fn op_fx15(mut self) {
+        pub fn op_fx15(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
 
             self.delay_timer = self.registers[vx as usize];
         }
  
-        pub fn op_fx18(mut self) {
+        pub fn op_fx18(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
 
             self.sound_timer = self.registers[vx as usize];
         }
  
-        pub fn op_fx1e(mut self) {
+        pub fn op_fx1e(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
 
             self.index = self.registers[vx as usize] as u16;
         }
 
-        pub fn op_fx29(mut self) {
+        pub fn op_fx29(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let digit: u16 = self.registers[vx as usize] as u16;
             self.index = (FONTSET_STARTING_ADDRESS + (5 * digit) as usize) as u16;
         }
 
-        pub fn op_fx33(mut self) {
+        pub fn op_fx33(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
             let mut value: u16 = self.registers[vx as usize] as u16;
  
@@ -342,7 +342,7 @@ pub mod chip8_emu {
             self.memory[self.index as usize] = (value % 10) as u8;
         }
 
-        pub fn op_fx55(mut self) {
+        pub fn op_fx55(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
 
             for i in 0..(vx + 1) {
@@ -350,7 +350,7 @@ pub mod chip8_emu {
             }
         }
 
-        pub fn op_fx65(mut self) {
+        pub fn op_fx65(&mut self) {
             let vx: u16 = (self.opcode & 0x0F00) >> 8;
 
             for i in 0..(vx + 1) {
