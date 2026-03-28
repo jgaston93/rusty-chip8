@@ -58,7 +58,7 @@ pub mod chip8_emu {
         }
 
         pub fn init_tables(&mut self) {
-            // self.table[0x0] = Chip8::table_0;
+            self.table[0x0] = Chip8::table_0;
             self.table[0x1] = Chip8::op_1nnn;
             self.table[0x2] = Chip8::op_2nnn;
             self.table[0x3] = Chip8::op_3xkk;
@@ -66,14 +66,14 @@ pub mod chip8_emu {
             self.table[0x5] = Chip8::op_5xy0;
             self.table[0x6] = Chip8::op_6xkk;
             self.table[0x7] = Chip8::op_7xkk;
-            // self.table[0x8] = Chip8::table_8;
+            self.table[0x8] = Chip8::table_8;
             self.table[0x9] = Chip8::op_9xy0;
             self.table[0xA] = Chip8::op_annn;
             self.table[0xB] = Chip8::op_bnnn;
             self.table[0xC] = Chip8::op_cxkk;
             self.table[0xD] = Chip8::op_dxyn;
-            // self.table[0xE] = Chip8::table_e;
-            // self.table[0xF] = Chip8::table_f;
+            self.table[0xE] = Chip8::table_e;
+            self.table[0xF] = Chip8::table_f;
 
             for i in 0..(0xE + 1) {
                 self.table_0[i] = Chip8::op_null;
@@ -110,6 +110,22 @@ pub mod chip8_emu {
             self.table_f[0x33] = Chip8::op_fx33;
             self.table_f[0x55] = Chip8::op_fx55;
             self.table_f[0x65] = Chip8::op_fx65;
+        }
+
+        pub fn table_0(&mut self) {
+            self.table_0[(self.opcode & 0x000F) as usize](self);
+        }
+
+        pub fn table_8(&mut self) {
+            self.table_8[(self.opcode & 0x000F) as usize](self);
+        }
+
+        pub fn table_e(&mut self) {
+            self.table_e[(self.opcode & 0x000F) as usize](self);
+        }
+
+        pub fn table_f(&mut self) {
+            self.table_f[(self.opcode & 0x00FF) as usize](self);
         }
 
         pub fn op_null(&mut self)
@@ -439,6 +455,12 @@ pub mod chip8_emu {
                 keypad: [0; 16],
                 video: [0; VIDEO_WIDTH * VIDEO_HEIGHT],
                 opcode: 0,
+
+                table: [Chip8::op_null; 0xF + 1],
+                table_0: [Chip8::op_null; 0xE + 1], 
+                table_8: [Chip8::op_null; 0xE + 1],
+                table_e: [Chip8::op_null; 0xE + 1],
+                table_f: [Chip8::op_null; 0x65 + 1],
             };
 
             chip8.memory[FONTSET_STARTING_ADDRESS..FONTSET_STARTING_ADDRESS + FONTSET.len()]
