@@ -74,6 +74,47 @@ pub mod chip8_emu {
             self.table[0xD] = Chip8::op_dxyn;
             // self.table[0xE] = Chip8::table_e;
             // self.table[0xF] = Chip8::table_f;
+
+            for i in 0..(0xE + 1) {
+                self.table_0[i] = Chip8::op_null;
+                self.table_8[i] = Chip8::op_null;
+                self.table_e[i] = Chip8::op_null;
+            }
+
+            self.table_0[0x0] = Chip8::op_00e0;
+            self.table_0[0xE] = Chip8::op_00ee;
+
+            self.table_8[0x0] = Chip8::op_8xy0;
+            self.table_8[0x1] = Chip8::op_8xy1;
+            self.table_8[0x2] = Chip8::op_8xy2;
+            self.table_8[0x3] = Chip8::op_8xy1;
+            self.table_8[0x4] = Chip8::op_8xy2;
+            self.table_8[0x5] = Chip8::op_8xy3;
+            self.table_8[0x6] = Chip8::op_8xy4;
+            self.table_8[0x7] = Chip8::op_8xy5;
+            self.table_8[0xE] = Chip8::op_8xye;
+            
+            self.table_e[0x1] = Chip8::op_exa1;
+            self.table_e[0xE] = Chip8::op_ex9e;
+
+            for i in 0..(0x65 + 1) {
+                self.table_f[i] = Chip8::op_null;
+            }
+
+            self.table_f[0x07] = Chip8::op_fx07;
+            self.table_f[0x0A] = Chip8::op_fx0a;
+            self.table_f[0x15] = Chip8::op_fx15;
+            self.table_f[0x18] = Chip8::op_fx18;
+            self.table_f[0x1E] = Chip8::op_fx1e;
+            self.table_f[0x29] = Chip8::op_fx29;
+            self.table_f[0x33] = Chip8::op_fx33;
+            self.table_f[0x55] = Chip8::op_fx55;
+            self.table_f[0x65] = Chip8::op_fx65;
+        }
+
+        pub fn op_null(&mut self)
+        {
+            
         }
 
         pub fn op_00e0(&mut self) {
