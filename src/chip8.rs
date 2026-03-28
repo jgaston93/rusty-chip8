@@ -323,6 +323,41 @@ pub mod chip8_emu {
             self.index = self.registers[vx as usize] as u16;
         }
 
+        pub fn op_fx29(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let digit: u16 = self.registers[vx as usize] as u16;
+            self.index = (FONTSET_STARTING_ADDRESS + (5 * digit) as usize) as u16;
+        }
+
+        pub fn op_fx33(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+            let mut value: u16 = self.registers[vx as usize] as u16;
+ 
+            self.memory[(self.index + 2) as usize] = (value % 10) as u8;
+            value /= 10;
+
+            self.memory[(self.index + 1) as usize] = (value % 10) as u8;
+            value /= 10;
+
+            self.memory[self.index as usize] = (value % 10) as u8;
+        }
+
+        pub fn op_fx55(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+
+            for i in 0..(vx + 1) {
+                 self.memory[(self.index + i) as usize] = self.registers[i as usize];
+            }
+        }
+
+        pub fn op_fx65(mut self) -> () {
+            let vx: u16 = (self.opcode & 0x0F00) >> 8;
+
+            for i in 0..(vx + 1) {
+                self.registers[i as usize] = self.memory[(self.index + i) as usize];
+            }
+        }
+
         pub fn new() -> Chip8 {
             let mut chip8: Chip8 = Chip8 {
                 registers: [0; 16],
