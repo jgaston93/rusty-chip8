@@ -128,6 +128,25 @@ pub mod chip8_emu {
             self.table_f[(self.opcode & 0x00FF) as usize](self);
         }
 
+        pub fn cycle(&mut self) {
+            self.opcode = 0;
+            self.opcode = self.memory[self.pc as usize] as u16;
+            self.opcode <<= 8;
+            self.opcode += self.memory[(self.pc + 1) as usize] as u16;
+
+            self.pc += 2;
+
+            self.table[((self.opcode & 0xF000) >> 12) as usize](self);
+
+            if self.delay_timer > 0 {
+                self.delay_timer -= 1;
+            }
+
+            if self.sound_timer > 0 {
+                self.sound_timer -= 1;
+            }
+        }
+
         pub fn op_null(&mut self)
         {
             
