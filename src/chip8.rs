@@ -57,6 +57,25 @@ pub mod chip8_emu {
             Ok(())
         }
 
+        pub fn init_tables(&mut self) {
+            // self.table[0x0] = Chip8::table_0;
+            self.table[0x1] = Chip8::op_1nnn;
+            self.table[0x2] = Chip8::op_2nnn;
+            self.table[0x3] = Chip8::op_3xkk;
+            self.table[0x4] = Chip8::op_4xkk;
+            self.table[0x5] = Chip8::op_5xy0;
+            self.table[0x6] = Chip8::op_6xkk;
+            self.table[0x7] = Chip8::op_7xkk;
+            // self.table[0x8] = Chip8::table_8;
+            self.table[0x9] = Chip8::op_9xy0;
+            self.table[0xA] = Chip8::op_annn;
+            self.table[0xB] = Chip8::op_bnnn;
+            self.table[0xC] = Chip8::op_cxkk;
+            self.table[0xD] = Chip8::op_dxyn;
+            // self.table[0xE] = Chip8::table_e;
+            // self.table[0xF] = Chip8::table_f;
+        }
+
         pub fn op_00e0(&mut self) {
             self.video = [0; VIDEO_WIDTH * VIDEO_HEIGHT];
         }
