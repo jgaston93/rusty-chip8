@@ -26,6 +26,8 @@ pub mod chip8_emu {
         0xF0, 0x80, 0xF0, 0x80, 0x80, // F
     ];
 
+    type Chip8Fn = fn(&mut Chip8);
+
     pub struct Chip8 {
         registers: [u8; 16],
         memory: [u8; 4096],
@@ -38,6 +40,12 @@ pub mod chip8_emu {
         keypad: [u8; 16],
         video: [u32; VIDEO_WIDTH * VIDEO_HEIGHT],
         opcode: u16,
+
+        table: [Chip8Fn; 0xF + 1],
+        table_0: [Chip8Fn; 0xE + 1], 
+        table_8: [Chip8Fn; 0xE + 1],
+        table_e: [Chip8Fn; 0xE + 1],
+        table_f: [Chip8Fn; 0x65 + 1],
     }
 
     impl Chip8 {
